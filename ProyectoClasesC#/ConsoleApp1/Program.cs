@@ -1,4 +1,30 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
+using System.Drawing;
+
+
+/**
+ * EditorGrafico
+ *      Actúa como un contenedor para todos los objetos gráficos.
+ *      Proporciona métodos para agregar nuevos objetos gráficos y para dibujar todos los objetos gráficos que contiene.
+ *      Posee una relación de asociación IGraficos al usar los objetos que se implementan en la interfaz.
+ */
+public class EditorGrafico
+{
+    private List<IGrafico> _graficos = new List<IGrafico>();
+
+    public void AddGrafico(IGrafico grafico)
+    {5
+        _graficos.Add(grafico);
+    }
+
+    public void DibujarTodo()
+    {
+        foreach (var grafico in _graficos)
+        {
+            grafico.Dibujar();
+        }
+    }
+}
 
 
 /**
@@ -6,8 +32,6 @@
  * Defino los métodos que van a ser implementados por cualquier clase que represente un gráfico.
  * Método Mover:
      * Debe ser implementado por cualquier clase que implemente IGrafico.
-     * @param x La nueva posición x del gráfico.
-     * @param y La nueva posición y del gráfico.
      * @return Verdadero si el gráfico pudo ser movido, falso en caso contrario.
  * Método Dibujar:
      * Debe ser implementado por cualquier clase que implemente IGrafico.
@@ -34,8 +58,6 @@ public class Punto : IGrafico
     /**
     * Constructor de Punto:
         * Inicializa un nuevo punto con las coordenadas dadas.
-        * @param x La coordenada x del punto.
-        * @param y La coordenada y del punto.
     */
     public Punto(int x, int y)
     {
@@ -77,7 +99,6 @@ public class GraficoCompuesto : IGrafico
     /**
      * Método AddGrafico
      * Añade un nuevo gráfico a la lista de gráficos.
-     * @param grafico El gráfico a añadir.
      */
     public void AddGrafico(IGrafico grafico)
     {
@@ -120,9 +141,6 @@ public class Circulo : Punto
     /**
      * Constructor de Circulo
      * Inicializo un nuevo círculo con las coordenadas y el radio dados.
-     * @param x La coordenada x del centro del círculo.
-     * @param y La coordenada y del centro del círculo.
-     * @param radio El radio del círculo.
      */
     public Circulo(int x, int y, int radio) : base(x, y)
     {
@@ -159,10 +177,6 @@ public class Rectangulo : Punto
     /**
      * Constructor de Rectangulo
      * Inicializa un nuevo rectángulo con las coordenadas, el ancho y el alto dados.
-     * @param x La coordenada x de la esquina superior izquierda del rectángulo.
-     * @param y La coordenada y de la esquina superior izquierda del rectángulo.
-     * @param ancho El ancho del rectángulo.
-     * @param alto El alto del rectángulo.
      */
     public Rectangulo(int x, int y, int ancho, int alto) : base(x, y)
     {
@@ -193,6 +207,8 @@ class Program
 {
     /**
      * Punto de entrada del programa.
+     *      Se crean instancias de la clase EditorGrafico, Punto, Circulo, Rectangulo y GraficoCompuesto.
+     *      
      */
     static void Main(string[] args)
     {
@@ -254,6 +270,18 @@ class Program
 
             // Dibujar el gráfico compuesto
             miGraficoCompuesto.Dibujar();
+
+            // Creo un EditorGrafico
+            EditorGrafico miEditor = new EditorGrafico();
+
+            //Agrego los objetos gráficos al editor
+            miEditor.AddGrafico(miPunto);
+            miEditor.AddGrafico(miCirculo);
+            miEditor.AddGrafico(miRectangulo);
+
+            // Dibujar todos los objetos gráficos
+            miEditor.DibujarTodo();
+
 
             /**
              * Bucle para mover el gráfico o salir. Se pregunta al usuario que es lo que
