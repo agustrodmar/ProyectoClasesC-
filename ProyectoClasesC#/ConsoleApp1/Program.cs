@@ -13,7 +13,7 @@ public class EditorGrafico
     private List<IGrafico> _graficos = new List<IGrafico>();
 
     public void AddGrafico(IGrafico grafico)
-    {5
+    {
         _graficos.Add(grafico);
     }
 
