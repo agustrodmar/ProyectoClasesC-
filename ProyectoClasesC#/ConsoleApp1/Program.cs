@@ -1,22 +1,30 @@
 using System.ComponentModel;
 using System.Drawing;
 
-
 /**
- * EditorGrafico
- *      Actúa como un contenedor para todos los objetos gráficos.
- *      Proporciona métodos para agregar nuevos objetos gráficos y para dibujar todos los objetos gráficos que contiene.
- *      Posee una relación de asociación IGraficos al usar los objetos que se implementan en la interfaz.
+ * Clase EditorGrafico que actúa como un contenedor para todos los objetos gráficos.
+ * Proporciona métodos para agregar nuevos objetos gráficos y para dibujar todos los objetos gráficos que contiene.
+ * Posee una relación de asociación IGraficos al usar los objetos que se implementan en la interfaz.
+ *
+ * @property _graficos Lista de objetos gráficos.
  */
 public class EditorGrafico
 {
     private List<IGrafico> _graficos = new List<IGrafico>();
 
+    /**
+     * Método para agregar un nuevo objeto gráfico a la lista.
+     *
+     * @param grafico El objeto gráfico a agregar.
+     */
     public void AddGrafico(IGrafico grafico)
     {
         _graficos.Add(grafico);
     }
 
+    /**
+     * Método para dibujar todos los objetos gráficos en la lista.
+     */
     public void DibujarTodo()
     {
         foreach (var grafico in _graficos)
@@ -26,47 +34,56 @@ public class EditorGrafico
     }
 }
 
-
 /**
- * Interfaz IGrafico
- * Defino los métodos que van a ser implementados por cualquier clase que represente un gráfico.
- * Método Mover:
-     * Debe ser implementado por cualquier clase que implemente IGrafico.
-     * @return Verdadero si el gráfico pudo ser movido, falso en caso contrario.
- * Método Dibujar:
-     * Debe ser implementado por cualquier clase que implemente IGrafico.
+ * Interfaz IGrafico que define los métodos que van a ser implementados por cualquier clase que represente un gráfico.
  */
 public interface IGrafico 
 {
-
+    /**
+     * Método Mover que debe ser implementado por cualquier clase que implemente IGrafico.
+     *
+     * @param x La nueva coordenada x.
+     * @param y La nueva coordenada y.
+     * @return Verdadero si el gráfico pudo ser movido, falso en caso contrario.
+     */
     public bool Mover(int x, int y);
 
+    /**
+     * Método Dibujar que debe ser implementado por cualquier clase que implemente IGrafico.
+     */
     public void Dibujar();
-   
 }
 
 /**
- * Clase Punto:
-    * Representa un punto en un espacio bidimensional.
-    * Implementa la interfaz IGrafico.
+ * Clase Punto que representa un punto en un espacio bidimensional e implementa la interfaz IGrafico.
+ *
+ * @property X Coordenada x del punto.
+ * @property Y Coordenada y del punto.
  */
 public class Punto : IGrafico 
 {
-    public int X { get; set; } // Propiedades X e Y representan las coordenadas del punto.
+    public int X { get; set; }
     public int Y { get; set; }
 
     /**
-    * Constructor de Punto:
-        * Inicializa un nuevo punto con las coordenadas dadas.
-    */
+     * Constructor de Punto que inicializa un nuevo punto con las coordenadas dadas.
+     *
+     * @param x La coordenada x del punto.
+     * @param y La coordenada y del punto.
+     */
     public Punto(int x, int y)
     {
         X = x;
         Y = y;
     }
 
-
-    // Implementación del método Mover para la clase Punto.
+    /**
+     * Implementación del método Mover para la clase Punto. Mueve el punto a las nuevas coordenadas si están dentro de la pantalla (800x600).
+     *
+     * @param x La nueva coordenada x.
+     * @param y La nueva coordenada y.
+     * @return Verdadero si el punto pudo ser movido, falso en caso contrario.
+     */
     public virtual bool Mover(int x, int y) 
     {
         if (x < 0 || x > 800 || y < 0 || y > 600) // Si se mueve fuera de pantalla (800x600) devuelve false.
@@ -78,18 +95,20 @@ public class Punto : IGrafico
         return true;
     }
 
-    // Implementación del método Dibujar para la clase Punto.
+    /**
+     * Implementación del método Dibujar para la clase Punto. Dibuja el punto en las coordenadas actuales.
+     */
     public virtual void Dibujar() 
     {
         Console.WriteLine($"Dibujando un Punto en ({X}, {Y})");
     }
-
 }
 
 /**
- * Clase GraficoCompuesto
- * Representa un gráfico compuesto por varios otros gráficos.
+ * Clase GraficoCompuesto que representa un gráfico compuesto por varios otros gráficos.
  * Implementa la interfaz IGrafico.
+ *
+ * @property _graficos Lista de gráficos que componen este gráfico compuesto.
  */
 public class GraficoCompuesto : IGrafico
 {
@@ -97,15 +116,22 @@ public class GraficoCompuesto : IGrafico
     private List<IGrafico> _graficos = new List<IGrafico>();
 
     /**
-     * Método AddGrafico
-     * Añade un nuevo gráfico a la lista de gráficos.
+     * Método para añadir un nuevo gráfico a la lista de gráficos.
+     *
+     * @param grafico El objeto gráfico a agregar.
      */
     public void AddGrafico(IGrafico grafico)
     {
         _graficos.Add(grafico);
     }
 
-    // Implementación del método Mover para GraficoCompuesto
+    /**
+     * Implementación del método Mover para GraficoCompuesto. Mueve todos los gráficos en la lista a las nuevas coordenadas.
+     *
+     * @param x La nueva coordenada x.
+     * @param y La nueva coordenada y.
+     * @return Verdadero si todos los gráficos pudieron ser movidos, falso en caso contrario.
+     */
     public bool Mover(int x, int y)
     {
         foreach (var grafico in _graficos)
@@ -118,7 +144,9 @@ public class GraficoCompuesto : IGrafico
         return true;
     }
 
-    // Implementación del método Dibujar para GraficoCompuesto
+    /**
+     * Implementación del método Dibujar para GraficoCompuesto. Dibuja todos los gráficos en la lista.
+     */
     public void Dibujar()
     {
         foreach (var grafico in _graficos)
@@ -129,9 +157,10 @@ public class GraficoCompuesto : IGrafico
 }
 
 /**
- * Clase Circulo
- * Representa un círculo en un espacio bidimensional.
+ * Clase Circulo que representa un círculo en un espacio bidimensional.
  * Hereda de la clase Punto e implementa la interfaz IGrafico.
+ *
+ * @property Radio Radio del círculo.
  */
 public class Circulo : Punto
 {
@@ -139,14 +168,24 @@ public class Circulo : Punto
     public int Radio { get; set; }
 
     /**
-     * Constructor de Circulo
-     * Inicializo un nuevo círculo con las coordenadas y el radio dados.
+     * Constructor de Circulo que inicializa un nuevo círculo con las coordenadas y el radio dados.
+     *
+     * @param x La coordenada x del círculo.
+     * @param y La coordenada y del círculo.
+     * @param radio El radio del círculo.
      */
     public Circulo(int x, int y, int radio) : base(x, y)
     {
         Radio = radio;
     }
 
+    /**
+     * Implementación del método Mover para la clase Circulo. Mueve el círculo a las nuevas coordenadas si están dentro de la pantalla (800x600).
+     *
+     * @param x La nueva coordenada x.
+     * @param y La nueva coordenada y.
+     * @return Verdadero si el círculo pudo ser movido, falso en caso contrario.
+     */
     public override bool Mover(int x, int y)
     {
         if (x - Radio < 0 || x + Radio > 800 || y - Radio < 0 || y + Radio > 600)
@@ -157,6 +196,10 @@ public class Circulo : Punto
         Y = y;
         return true;
     }
+
+    /**
+     * Implementación del método Dibujar para la clase Circulo. Dibuja el círculo en las coordenadas actuales con el radio dado.
+     */
     public override void Dibujar()
     {
         Console.WriteLine($"Dibujando un Círculo en ({X}, {Y}) con radio {Radio}");
@@ -164,19 +207,24 @@ public class Circulo : Punto
 }
 
 /**
- * Clase Rectangulo
- * Representa un rectángulo en un espacio bidimensional.
+ * Clase Rectangulo que representa un rectángulo en un espacio bidimensional.
  * Hereda de la clase Punto e implementa la interfaz IGrafico.
+ *
+ * @property Ancho Ancho del rectángulo.
+ * @property Alto Alto del rectángulo.
  */
 public class Rectangulo : Punto
 {
-    // Propiedades Ancho y Alto representan las dimensiones del rectángulo.
     public int Ancho { get; set; }
     public int Alto { get; set; }
 
     /**
-     * Constructor de Rectangulo
-     * Inicializa un nuevo rectángulo con las coordenadas, el ancho y el alto dados.
+     * Constructor de Rectangulo que inicializa un nuevo rectángulo con las coordenadas, el ancho y el alto dados.
+     *
+     * @param x La coordenada x del rectángulo.
+     * @param y La coordenada y del rectángulo.
+     * @param ancho El ancho del rectángulo.
+     * @param alto El alto del rectángulo.
      */
     public Rectangulo(int x, int y, int ancho, int alto) : base(x, y)
     {
@@ -184,6 +232,13 @@ public class Rectangulo : Punto
         Alto = alto;
     }
 
+    /**
+     * Implementación del método Mover para la clase Rectangulo. Mueve el rectángulo a las nuevas coordenadas si están dentro de la pantalla (800x600).
+     *
+     * @param x La nueva coordenada x.
+     * @param y La nueva coordenada y.
+     * @return Verdadero si el rectángulo pudo ser movido, falso en caso contrario.
+     */
     public override bool Mover(int x, int y)
     {
         if (x < 0 || x + Ancho > 800 || y < 0 || y + Alto > 600)
@@ -195,6 +250,9 @@ public class Rectangulo : Punto
         return true;
     }
 
+    /**
+     * Implementación del método Dibujar para la clase Rectangulo. Dibuja el rectángulo en las coordenadas actuales con el ancho y alto dados.
+     */
     public override void Dibujar()
     {
         Console.WriteLine($"Dibujando un Rectángulo en ({X}, {Y}) con ancho {Ancho} y alto {Alto}");
@@ -206,9 +264,9 @@ public class Rectangulo : Punto
 class Program
 {
     /**
-     * Punto de entrada del programa.
-     *      Se crean instancias de la clase EditorGrafico, Punto, Circulo, Rectangulo y GraficoCompuesto.
-     *      
+     * Punto de entrada del programa. Se crean instancias de la clase EditorGrafico, Punto, Circulo, Rectangulo y GraficoCompuesto.
+     *
+     * @param args Argumentos de línea de comandos.
      */
     static void Main(string[] args)
     {
