@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Drawing;
+using System.Text;
 
 /**
  * Clase EditorGrafico que actúa como un contenedor para todos los objetos gráficos.
@@ -25,19 +26,21 @@ public class EditorGrafico
     /**
      * Método para dibujar todos los objetos gráficos en la lista.
      */
-    public void DibujarTodo()
+    public string DibujarTodo()
     {
+        StringBuilder sb = new StringBuilder();
         foreach (var grafico in _graficos)
         {
-            grafico.Dibujar();
+            sb.AppendLine(grafico.Dibujar());
         }
+        return sb.ToString();
     }
 }
 
 /**
  * Interfaz IGrafico que define los métodos que van a ser implementados por cualquier clase que represente un gráfico.
  */
-public interface IGrafico 
+public interface IGrafico
 {
     /**
      * Método Mover que debe ser implementado por cualquier clase que implemente IGrafico.
@@ -51,7 +54,7 @@ public interface IGrafico
     /**
      * Método Dibujar que debe ser implementado por cualquier clase que implemente IGrafico.
      */
-    public void Dibujar();
+    public string Dibujar();
 }
 
 /**
@@ -60,7 +63,7 @@ public interface IGrafico
  * @property X Coordenada x del punto.
  * @property Y Coordenada y del punto.
  */
-public class Punto : IGrafico 
+public class Punto : IGrafico
 {
     public int X { get; set; }
     public int Y { get; set; }
@@ -73,6 +76,10 @@ public class Punto : IGrafico
      */
     public Punto(int x, int y)
     {
+        if (x < 0 || x > 800 || y < 0 || y > 600)
+        {
+            throw new Exception("El punto está fuera de la pantalla.");
+        }
         X = x;
         Y = y;
     }
@@ -84,7 +91,7 @@ public class Punto : IGrafico
      * @param y La nueva coordenada y.
      * @return Verdadero si el punto pudo ser movido, falso en caso contrario.
      */
-    public virtual bool Mover(int x, int y) 
+    public virtual bool Mover(int x, int y)
     {
         if (x < 0 || x > 800 || y < 0 || y > 600) // Si se mueve fuera de pantalla (800x600) devuelve false.
         {
@@ -98,9 +105,9 @@ public class Punto : IGrafico
     /**
      * Implementación del método Dibujar para la clase Punto. Dibuja el punto en las coordenadas actuales.
      */
-    public virtual void Dibujar() 
+    public virtual string Dibujar()
     {
-        Console.WriteLine($"Dibujando un Punto en ({X}, {Y})");
+        return $"Dibujando un Punto en ({X}, {Y})";
     }
 }
 
@@ -147,12 +154,14 @@ public class GraficoCompuesto : IGrafico
     /**
      * Implementación del método Dibujar para GraficoCompuesto. Dibuja todos los gráficos en la lista.
      */
-    public void Dibujar()
+    public string Dibujar()
     {
+        StringBuilder sb = new StringBuilder();
         foreach (var grafico in _graficos)
         {
-            grafico.Dibujar();
+            sb.AppendLine(grafico.Dibujar());
         }
+        return sb.ToString();
     }
 }
 
@@ -176,6 +185,10 @@ public class Circulo : Punto
      */
     public Circulo(int x, int y, int radio) : base(x, y)
     {
+        if (x - radio < 0 || x + radio > 800 || y - radio < 0 || y + radio > 600)
+        {
+            throw new Exception("El círculo está fuera de la pantalla.");
+        }
         Radio = radio;
     }
 
@@ -200,9 +213,9 @@ public class Circulo : Punto
     /**
      * Implementación del método Dibujar para la clase Circulo. Dibuja el círculo en las coordenadas actuales con el radio dado.
      */
-    public override void Dibujar()
+    public override string Dibujar()
     {
-        Console.WriteLine($"Dibujando un Círculo en ({X}, {Y}) con radio {Radio}");
+        return $"Dibujando un Círculo en ({X}, {Y}) con radio {Radio}";
     }
 }
 
@@ -228,6 +241,10 @@ public class Rectangulo : Punto
      */
     public Rectangulo(int x, int y, int ancho, int alto) : base(x, y)
     {
+        if (x < 0 || x + ancho > 800 || y < 0 || y + alto > 600)
+        {
+            throw new Exception("El rectángulo está fuera de la pantalla.");
+        }
         Ancho = ancho;
         Alto = alto;
     }
@@ -253,9 +270,9 @@ public class Rectangulo : Punto
     /**
      * Implementación del método Dibujar para la clase Rectangulo. Dibuja el rectángulo en las coordenadas actuales con el ancho y alto dados.
      */
-    public override void Dibujar()
+    public override string Dibujar()
     {
-        Console.WriteLine($"Dibujando un Rectángulo en ({X}, {Y}) con ancho {Ancho} y alto {Alto}");
+        return $"Dibujando un Rectángulo en ({X}, {Y}) con ancho {Ancho} y alto {Alto}";
     }
 }
 
@@ -293,12 +310,6 @@ class Program
             Console.WriteLine("Introduce el radio del círculo: ");
             int radio = Convert.ToInt32(Console.ReadLine());
 
-            if (x - radio < 0 || x + radio > 800 || y - radio < 0 || y + radio > 600)
-            {
-                throw new Exception("El círculo está fuera de la pantalla.");
-            }
-
-
             Circulo miCirculo = new Circulo(x, y, radio);
 
             // Crear un Rectangulo
@@ -311,11 +322,6 @@ class Program
             Console.WriteLine("Introduce el alto del rectángulo: ");
             int alto = Convert.ToInt32(Console.ReadLine());
 
-            if (x < 0 || x + ancho > 800 || y < 0 || y + alto > 600)
-            {
-                throw new Exception("El rectángulo está fuera de la pantalla.");
-            }
-
             Rectangulo miRectangulo = new Rectangulo(x, y, ancho, alto);
 
             // Crear un objeto de GraficoCompuesto
@@ -326,8 +332,9 @@ class Program
             miGraficoCompuesto.AddGrafico(miCirculo);
             miGraficoCompuesto.AddGrafico(miRectangulo);
 
-            // Dibujar el gráfico compuesto
-            miGraficoCompuesto.Dibujar();
+            // Dibujo el Gráfico Compuesto manteniendo el Principio de Responsabilidad única para las clases.
+            string mensaje = miGraficoCompuesto.Dibujar();
+            Console.WriteLine(mensaje);
 
             // Creo un EditorGrafico
             EditorGrafico miEditor = new EditorGrafico();
@@ -337,8 +344,9 @@ class Program
             miEditor.AddGrafico(miCirculo);
             miEditor.AddGrafico(miRectangulo);
 
-            // Dibujar todos los objetos gráficos
-            miEditor.DibujarTodo();
+            // Dibujo todos los objetos gráficos manteniendo el Principio de Responsabilidad única para las clases.
+            mensaje = miEditor.DibujarTodo();
+            Console.WriteLine(mensaje);
 
 
             /**
